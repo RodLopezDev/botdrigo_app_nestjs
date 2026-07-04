@@ -14,7 +14,7 @@ import { Tenant } from './tenant.entity';
 
 import { TenantRole } from '../../enums/auth/tenant-role.enum';
 
-@Entity('user_tenants')
+@Entity('auth_user_tenants')
 @Unique(['userId', 'tenantId'])
 @Index('idx_user_tenants_tenant', ['tenantId'])
 @Index('idx_user_tenants_user', ['userId'])

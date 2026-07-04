@@ -10,7 +10,7 @@ import {
 import { User } from './user.entity';
 import { Tenant } from './tenant.entity';
 
-@Entity('refresh_tokens')
+@Entity('auth_refresh_tokens')
 export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;

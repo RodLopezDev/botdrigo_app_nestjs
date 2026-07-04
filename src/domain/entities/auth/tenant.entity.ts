@@ -10,7 +10,7 @@ import {
 import { UserTenant } from './user-tenant.entity';
 import { BusinessHours } from '../../enums/auth/business-ours.json';
 
-@Entity('tenants')
+@Entity('auth_tenants')
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')
   id: string;

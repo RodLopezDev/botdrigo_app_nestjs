@@ -11,7 +11,7 @@ import {
 import { Tenant } from './tenant.entity';
 import { UserTenant } from './user-tenant.entity';
 
-@Entity('staff_shifts')
+@Entity('auth_staff_shifts')
 @Index('idx_staff_shifts_tenant', ['tenantId'])
 @Check(
   'chk_clock_out_after_in',

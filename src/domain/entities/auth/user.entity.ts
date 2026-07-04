@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { UserTenant } from './user-tenant.entity';
 
-@Entity('users')
+@Entity('auth_users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;

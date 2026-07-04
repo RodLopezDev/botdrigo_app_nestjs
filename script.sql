@@ -23,7 +23,7 @@ BEGIN;
 -- ------------------------------------------------------------
 -- 1. Tenant
 -- ------------------------------------------------------------
-INSERT INTO "tenants" (
+INSERT INTO "auth_tenants" (
   "id", "name", "slug", "timezone", "currency",
   "business_hours", "settings", "plan", "active", "created_at"
 ) VALUES (
@@ -39,7 +39,7 @@ INSERT INTO "tenants" (
   now()
 );
 
-INSERT INTO "tenants" (
+INSERT INTO "auth_tenants" (
   "id", "name", "slug", "timezone", "currency",
   "business_hours", "settings", "plan", "active", "created_at"
 ) VALUES (
@@ -60,7 +60,7 @@ INSERT INTO "tenants" (
 --    email: owner@my-food-store.com
 --    password: Password123!
 -- ------------------------------------------------------------
-INSERT INTO "users" (
+INSERT INTO "auth_users" (
   "id", "email", "password_hash", "full_name", "active", "created_at"
 ) VALUES (
   'cf5eff28-217c-4681-bd13-7f8213e8a385',
@@ -74,7 +74,7 @@ INSERT INTO "users" (
 -- ------------------------------------------------------------
 -- 3. Membresía usuario <-> tenant (rol OWNER)
 -- ------------------------------------------------------------
-INSERT INTO "user_tenants" (
+INSERT INTO "auth_user_tenants" (
   "id", "user_id", "tenant_id", "role", "active", "created_at"
 ) VALUES (
   '5b9e547b-ec39-435b-8997-34c122a4b4e6',
@@ -85,7 +85,7 @@ INSERT INTO "user_tenants" (
   now()
 );
 
-INSERT INTO "user_tenants" (
+INSERT INTO "auth_user_tenants" (
   "id", "user_id", "tenant_id", "role", "active", "created_at"
 ) VALUES (
   'ad5c1d3a-717e-47e2-a06f-cdb6749d2c91',
@@ -99,7 +99,7 @@ INSERT INTO "user_tenants" (
 -- ------------------------------------------------------------
 -- 4. Refresh token (activo, expira en 30 días)
 -- ------------------------------------------------------------
-INSERT INTO "refresh_tokens" (
+INSERT INTO "auth_refresh_tokens" (
   "id", "user_id", "current_tenant_id", "token_hash",
   "expires_at", "revoked_at", "created_at"
 ) VALUES (
@@ -116,7 +116,7 @@ INSERT INTO "refresh_tokens" (
 -- ------------------------------------------------------------
 -- 5. Turno del staff (clock_in y clock_out del día)
 -- ------------------------------------------------------------
-INSERT INTO "staff_shifts" (
+INSERT INTO "auth_staff_shifts" (
   "id", "tenant_id", "user_tenant_id", "clock_in", "clock_out", "created_at"
 ) VALUES (
   '7aebd363-24c3-42c1-a9f3-8acc0b277838',
