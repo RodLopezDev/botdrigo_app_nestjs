@@ -3,20 +3,22 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
-import { createHash, randomBytes } from 'crypto';
-import type { SignOptions } from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+
 import { IsNull, Repository } from 'typeorm';
-import { RefreshToken } from '../../domain/entities/auth/refresh-token.entity';
-import { User } from '../../domain/entities/auth/user.entity';
-import { UserTenant } from '../../domain/entities/auth/user-tenant.entity';
+import type { SignOptions } from 'jsonwebtoken';
+import { createHash, randomBytes } from 'crypto';
+import { InjectRepository } from '@nestjs/typeorm';
+
 import {
   AccessTokenPayload,
   ResetTokenPayload,
 } from './interfaces/jwt-payload.interface';
+import { User } from '../../domain/entities/auth/user.entity';
+import { UserTenant } from '../../domain/entities/auth/user-tenant.entity';
+import { RefreshToken } from '../../domain/entities/auth/refresh-token.entity';
 
 @Injectable()
 export class AuthService {
@@ -64,6 +66,36 @@ export class AuthService {
     });
 
     return this.issueTokens(user, membership);
+  }
+
+  async me(userId: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user || !user.active) {
+      throw new UnauthorizedException();
+    }
+
+    const memberships = await this.userTenantRepo.find({
+      where: { userId: user.id, active: true },
+      relations: { tenant: true },
+      order: { createdAt: 'ASC' },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        active: user.active,
+        createdAt: user.createdAt,
+      },
+      tenants: memberships.map((membership) => ({
+        id: membership.tenant.id,
+        name: membership.tenant.name,
+        slug: membership.tenant.slug,
+        role: membership.role,
+        active: membership.tenant.active,
+      })),
+    };
   }
 
   async refresh(refreshToken: string) {

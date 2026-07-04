@@ -1,10 +1,21 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
+
 import { LoginDto } from './dto/login.dto';
+import { AuthService } from './auth.service';
+import { Auth } from './decorators/auth.decorator';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { CurrentUser } from './decorators/current-user.decorator';
+import type { AccessTokenPayload } from './interfaces/jwt-payload.interface';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -16,6 +27,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Inicia sesión y devuelve access + refresh token' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.password);
+  }
+
+  @Get('me')
+  @Auth()
+  @ApiOperation({
+    summary: 'Devuelve el usuario autenticado y los tenants a los que accede',
+  })
+  me(@CurrentUser() user: AccessTokenPayload) {
+    return this.authService.me(user.sub);
   }
 
   @Post('refresh')
