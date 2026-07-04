@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -60,12 +61,30 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const membership = await this.userTenantRepo.findOne({
-      where: { userId: user.id, active: true },
-      order: { createdAt: 'ASC' },
-    });
+    const memberships = await this.getActiveMemberships(user.id);
 
-    return this.issueTokens(user, membership);
+    // Solo auto-seleccionamos el tenant cuando hay exactamente uno.
+    // Con varios, el token se emite sin tenant y el usuario debe elegirlo
+    // vía POST /auth/select-tenant.
+    const membership = memberships.length === 1 ? memberships[0] : null;
+
+    return this.issueTokens(user, membership, memberships);
+  }
+
+  async selectTenant(userId: string, tenantId: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user || !user.active) {
+      throw new UnauthorizedException();
+    }
+
+    const memberships = await this.getActiveMemberships(userId);
+    const membership = memberships.find((item) => item.tenantId === tenantId);
+
+    if (!membership) {
+      throw new ForbiddenException('No tienes acceso a este tenant');
+    }
+
+    return this.issueTokens(user, membership, memberships);
   }
 
   async me(userId: string) {
@@ -182,7 +201,14 @@ export class AuthService {
     return { message: 'Contraseña actualizada correctamente.' };
   }
 
-  private async issueTokens(user: User, membership: UserTenant | null) {
+  private async issueTokens(
+    user: User,
+    membership: UserTenant | null,
+    memberships?: UserTenant[],
+  ) {
+    const tenantMemberships =
+      memberships ?? (await this.getActiveMemberships(user.id));
+
     const payload: AccessTokenPayload = {
       sub: user.id,
       email: user.email,
@@ -210,7 +236,26 @@ export class AuthService {
       },
       tenantId: payload.tenantId,
       role: payload.role,
+      tenants: this.mapTenants(tenantMemberships),
     };
+  }
+
+  private getActiveMemberships(userId: string) {
+    return this.userTenantRepo.find({
+      where: { userId, active: true },
+      relations: { tenant: true },
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  private mapTenants(memberships: UserTenant[]) {
+    return memberships.map((membership) => ({
+      id: membership.tenant.id,
+      name: membership.tenant.name,
+      slug: membership.tenant.slug,
+      role: membership.role,
+      active: membership.tenant.active,
+    }));
   }
 
   private async persistRefreshToken(

@@ -11,6 +11,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { Auth } from './decorators/auth.decorator';
+import { SelectTenantDto } from './dto/select-tenant.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -36,6 +37,19 @@ export class AuthController {
   })
   me(@CurrentUser() user: AccessTokenPayload) {
     return this.authService.me(user.sub);
+  }
+
+  @Post('select-tenant')
+  @Auth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Selecciona el tenant activo y emite tokens scopeados a él',
+  })
+  selectTenant(
+    @CurrentUser() user: AccessTokenPayload,
+    @Body() dto: SelectTenantDto,
+  ) {
+    return this.authService.selectTenant(user.sub, dto.tenantId);
   }
 
   @Post('refresh')

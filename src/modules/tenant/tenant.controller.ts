@@ -2,7 +2,7 @@ import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { TenantService } from './tenant.service';
-import { Auth } from '../auth/decorators/auth.decorator';
+import { TenantAuth } from '../auth/decorators/tenant-auth.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { AccessTokenPayload } from '../auth/interfaces/jwt-payload.interface';
 
@@ -12,7 +12,7 @@ export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
 
   @Get(':tenantId')
-  @Auth()
+  @TenantAuth()
   @ApiOperation({
     summary: 'Devuelve un tenant por id si el usuario tiene acceso',
   })
