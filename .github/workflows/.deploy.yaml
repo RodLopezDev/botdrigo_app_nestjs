@@ -17,6 +17,9 @@ jobs:
           key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
             echo "Changing to application directory"
             cd ~/apps/botdrigo_app_nestjs
             echo "Pulling latest changes"
