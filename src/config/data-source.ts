@@ -12,7 +12,10 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DB_NAME ?? 'botdrigo',
   synchronize: false,
   logging: process.env.DB_LOGGING === 'true',
-  entities: [isCompiled ? 'dist/**/*.entity.js' : 'src/**/*.entity.ts'],
+  entities: [
+    isCompiled ? 'dist/**/*.entity.js' : 'src/**/*.entity.ts',
+    isCompiled ? 'dist/**/*.view.js' : 'src/**/*.view.ts',
+  ],
   migrations: [isCompiled ? 'dist/migrations/*.js' : 'migrations/*.ts'],
 };
 
