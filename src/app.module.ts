@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { dataSourceOptions } from './config/data-source';
 
 import { AuthModule } from './modules/auth/auth.module';
-// import { TenantModule } from './modules/tenant/tenant.module';
+import { TenantModule } from './modules/tenant/tenant.module';
 // import { CatalogModule } from './modules/catalog/catalog.module';
 
 @Module({
@@ -14,7 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(dataSourceOptions),
     AuthModule,
-    // TenantModule,
+    TenantModule,
     // CatalogModule,
   ],
   controllers: [AppController],
