@@ -3,6 +3,8 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 const isCompiled = __filename.endsWith('.js');
 
+const sslMode = process.env.DB_SSL_MODE?.toLowerCase();
+
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: process.env.DB_HOST ?? 'localhost',
@@ -10,6 +12,10 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME ?? 'postgres',
   password: process.env.DB_PASSWORD ?? 'postgres',
   database: process.env.DB_NAME ?? 'botdrigo',
+  ssl:
+    sslMode === 'require' || sslMode === 'true'
+      ? { rejectUnauthorized: false }
+      : false,
   synchronize: false,
   logging: process.env.DB_LOGGING === 'true',
   entities: [isCompiled ? 'dist/**/*.entity.js' : 'src/**/*.entity.ts'],

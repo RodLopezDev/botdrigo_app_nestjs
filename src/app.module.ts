@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-// import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
-// import { dataSourceOptions } from './config/data-source';
+import { dataSourceOptions } from './config/data-source';
 
-// import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 // import { TenantModule } from './modules/tenant/tenant.module';
 // import { CatalogModule } from './modules/catalog/catalog.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // TypeOrmModule.forRoot(dataSourceOptions),
-    // AuthModule,
+    TypeOrmModule.forRoot(dataSourceOptions),
+    AuthModule,
     // TenantModule,
     // CatalogModule,
   ],
