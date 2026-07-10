@@ -17,8 +17,13 @@ jobs:
           key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd ~/apps/botdrigo-app-nestjs
+            echo "Changing to application directory"
+            cd ~/apps/botdrigo_app_nestjs
+            echo "Pulling latest changes"
             git pull origin main
+            echo "Installing dependencies"
             npm ci
+            echo "Building application"
             npm run build
+            echo "Reloading PM2"
             pm2 reload ecosystem.config.js --update-env
