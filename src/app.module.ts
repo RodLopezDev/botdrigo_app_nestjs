@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppService } from './app.service';
 import { AppController } from './app.controller';
 // import { dataSourceOptions } from './config/data-source';
 
@@ -19,6 +18,6 @@ import { AppController } from './app.controller';
     // CatalogModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
