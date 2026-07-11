@@ -49,7 +49,9 @@ export class DishIngredientController {
 
   @Patch(':id')
   @TenantRoles(TenantRole.OWNER)
-  @ApiOperation({ summary: 'Actualiza la cantidad de un ingrediente (solo OWNER)' })
+  @ApiOperation({
+    summary: 'Actualiza la cantidad de un ingrediente (solo OWNER)',
+  })
   update(
     @CurrentUser() user: AccessTokenPayload,
     @Param('dishId', ParseUUIDPipe) dishId: string,

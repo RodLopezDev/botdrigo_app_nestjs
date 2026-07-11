@@ -13,10 +13,14 @@ import { Dish } from './dish.entity';
 import { Ingredient } from './ingredient.entity';
 
 @Entity('catalog_dish_ingredients')
-@Index('uq_dish_ingredients_dish_ingredient_active', ['dishId', 'ingredientId'], {
-  unique: true,
-  where: '"deleted" = false',
-})
+@Index(
+  'uq_dish_ingredients_dish_ingredient_active',
+  ['dishId', 'ingredientId'],
+  {
+    unique: true,
+    where: '"deleted" = false',
+  },
+)
 @Check('chk_dish_ingredient_quantity_positive', '"quantity" > 0')
 export class DishIngredient {
   @PrimaryGeneratedColumn('uuid')

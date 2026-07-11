@@ -49,7 +49,9 @@ export class DishComboItemController {
 
   @Patch(':id')
   @TenantRoles(TenantRole.OWNER)
-  @ApiOperation({ summary: 'Actualiza la cantidad de un componente (solo OWNER)' })
+  @ApiOperation({
+    summary: 'Actualiza la cantidad de un componente (solo OWNER)',
+  })
   update(
     @CurrentUser() user: AccessTokenPayload,
     @Param('comboDishId', ParseUUIDPipe) comboDishId: string,

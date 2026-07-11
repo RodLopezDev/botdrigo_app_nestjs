@@ -36,7 +36,10 @@ export class IngredientService {
     return ingredient;
   }
 
-  async create(tenantId: string, dto: CreateIngredientDto): Promise<Ingredient> {
+  async create(
+    tenantId: string,
+    dto: CreateIngredientDto,
+  ): Promise<Ingredient> {
     const ingredient = this.ingredientRepo.create({
       tenantId,
       name: dto.name,

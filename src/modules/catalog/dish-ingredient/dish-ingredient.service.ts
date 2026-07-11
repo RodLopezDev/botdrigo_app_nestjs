@@ -122,9 +122,7 @@ export class DishIngredientService {
       error instanceof QueryFailedError &&
       (error as QueryFailedError & { code?: string }).code === '23505'
     ) {
-      return new ConflictException(
-        'Ese ingrediente ya está asociado al plato',
-      );
+      return new ConflictException('Ese ingrediente ya está asociado al plato');
     }
     return error;
   }

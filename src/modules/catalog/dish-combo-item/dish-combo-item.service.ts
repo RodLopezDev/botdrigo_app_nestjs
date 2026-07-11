@@ -132,9 +132,7 @@ export class DishComboItemService {
       error instanceof QueryFailedError &&
       (error as QueryFailedError & { code?: string }).code === '23505'
     ) {
-      return new ConflictException(
-        'Ese componente ya forma parte del combo',
-      );
+      return new ConflictException('Ese componente ya forma parte del combo');
     }
     return error;
   }

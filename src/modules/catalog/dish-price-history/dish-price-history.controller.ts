@@ -9,9 +9,7 @@ import type { AccessTokenPayload } from '../../auth/interfaces/jwt-payload.inter
 @ApiTags('catalog/dish-price-history')
 @Controller('catalog/dishes/:dishId/price-history')
 export class DishPriceHistoryController {
-  constructor(
-    private readonly priceHistoryService: DishPriceHistoryService,
-  ) {}
+  constructor(private readonly priceHistoryService: DishPriceHistoryService) {}
 
   @Get()
   @TenantAuth()
