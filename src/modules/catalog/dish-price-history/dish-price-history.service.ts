@@ -18,13 +18,17 @@ export class DishPriceHistoryService {
     tenantId: string,
     dishId: string,
   ): Promise<DishPriceHistory[]> {
-    const exists = await this.dishRepo.existsBy({ id: dishId, tenantId });
+    const exists = await this.dishRepo.existsBy({
+      id: dishId,
+      tenantId,
+      deleted: false,
+    });
     if (!exists) {
       throw new NotFoundException('Plato no encontrado');
     }
 
     return this.priceHistoryRepo.find({
-      where: { tenantId, dishId },
+      where: { tenantId, dishId, deleted: false },
       order: { changedAt: 'DESC' },
     });
   }

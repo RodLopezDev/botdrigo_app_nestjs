@@ -27,7 +27,7 @@ export class DishComboItemService {
   ): Promise<DishComboItem[]> {
     await this.assertDishExists(tenantId, comboDishId);
     return this.comboItemRepo.find({
-      where: { tenantId, comboDishId },
+      where: { tenantId, comboDishId, deleted: false },
       relations: { componentDish: true },
     });
   }
@@ -77,7 +77,8 @@ export class DishComboItemService {
     id: string,
   ): Promise<void> {
     const comboItem = await this.findOne(tenantId, comboDishId, id);
-    await this.comboItemRepo.remove(comboItem);
+    comboItem.deleted = true;
+    await this.comboItemRepo.save(comboItem);
   }
 
   private async findOne(
@@ -86,7 +87,7 @@ export class DishComboItemService {
     id: string,
   ): Promise<DishComboItem> {
     const comboItem = await this.comboItemRepo.findOne({
-      where: { id, comboDishId, tenantId },
+      where: { id, comboDishId, tenantId, deleted: false },
     });
 
     if (!comboItem) {
@@ -100,7 +101,11 @@ export class DishComboItemService {
     tenantId: string,
     dishId: string,
   ): Promise<void> {
-    const exists = await this.dishRepo.existsBy({ id: dishId, tenantId });
+    const exists = await this.dishRepo.existsBy({
+      id: dishId,
+      tenantId,
+      deleted: false,
+    });
     if (!exists) {
       throw new NotFoundException('Plato no encontrado');
     }
@@ -110,7 +115,11 @@ export class DishComboItemService {
     tenantId: string,
     dishId: string,
   ): Promise<void> {
-    const exists = await this.dishRepo.existsBy({ id: dishId, tenantId });
+    const exists = await this.dishRepo.existsBy({
+      id: dishId,
+      tenantId,
+      deleted: false,
+    });
     if (!exists) {
       throw new BadRequestException(
         'El plato componente no existe en el tenant',

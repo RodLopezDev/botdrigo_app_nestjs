@@ -3,11 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -16,7 +16,10 @@ import { DishIngredient } from './dish-ingredient.entity';
 import { IngredientUnit } from '../../enums/catalog/ingredient-unit.enum';
 
 @Entity('catalog_ingredients')
-@Unique(['tenantId', 'name'])
+@Index('uq_ingredients_tenant_name_active', ['tenantId', 'name'], {
+  unique: true,
+  where: '"deleted" = false',
+})
 @Check('chk_ingredient_cost_non_negative', '"cost_per_unit" >= 0')
 export class Ingredient {
   @PrimaryGeneratedColumn('uuid')
@@ -50,6 +53,9 @@ export class Ingredient {
 
   @Column({ type: 'boolean', default: true })
   active: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

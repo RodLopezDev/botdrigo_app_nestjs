@@ -13,8 +13,9 @@ import { ViewColumn, ViewEntity } from 'typeorm';
         2
       ) AS food_cost_pct
     FROM catalog_dishes d
-    JOIN catalog_dish_ingredients di ON di.dish_id = d.id
-    JOIN catalog_ingredients i ON i.id = di.ingredient_id
+    JOIN catalog_dish_ingredients di ON di.dish_id = d.id AND di.deleted = false
+    JOIN catalog_ingredients i ON i.id = di.ingredient_id AND i.deleted = false
+    WHERE d.deleted = false
     GROUP BY d.id, d.tenant_id, d.sale_price
   `,
 })

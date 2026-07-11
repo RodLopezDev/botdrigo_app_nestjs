@@ -25,13 +25,15 @@ export class DishService {
 
   findAll(tenantId: string): Promise<Dish[]> {
     return this.dishRepo.find({
-      where: { tenantId },
+      where: { tenantId, deleted: false },
       order: { name: 'ASC' },
     });
   }
 
   async findOne(tenantId: string, id: string): Promise<Dish> {
-    const dish = await this.dishRepo.findOne({ where: { id, tenantId } });
+    const dish = await this.dishRepo.findOne({
+      where: { id, tenantId, deleted: false },
+    });
 
     if (!dish) {
       throw new NotFoundException('Plato no encontrado');
@@ -117,7 +119,8 @@ export class DishService {
 
   async remove(tenantId: string, id: string): Promise<void> {
     const dish = await this.findOne(tenantId, id);
-    await this.dishRepo.remove(dish);
+    dish.deleted = true;
+    await this.dishRepo.save(dish);
   }
 
   private async assertCategoryExists(
@@ -127,6 +130,7 @@ export class DishService {
     const exists = await this.categoryRepo.existsBy({
       id: categoryId,
       tenantId,
+      deleted: false,
     });
 
     if (!exists) {

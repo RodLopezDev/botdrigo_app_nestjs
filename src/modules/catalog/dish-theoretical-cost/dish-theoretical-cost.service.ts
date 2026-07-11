@@ -22,7 +22,11 @@ export class DishTheoreticalCostService {
     tenantId: string,
     dishId: string,
   ): Promise<DishTheoreticalCost> {
-    const dishExists = await this.dishRepo.existsBy({ id: dishId, tenantId });
+    const dishExists = await this.dishRepo.existsBy({
+      id: dishId,
+      tenantId,
+      deleted: false,
+    });
     if (!dishExists) {
       throw new NotFoundException('Plato no encontrado');
     }

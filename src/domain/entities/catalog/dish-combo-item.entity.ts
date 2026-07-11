@@ -2,17 +2,24 @@ import {
   Check,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 
 import { Tenant } from '../auth/tenant.entity';
 import { Dish } from './dish.entity';
 
 @Entity('catalog_dish_combo_items')
-@Unique(['comboDishId', 'componentDishId'])
+@Index(
+  'uq_combo_items_combo_component_active',
+  ['comboDishId', 'componentDishId'],
+  {
+    unique: true,
+    where: '"deleted" = false',
+  },
+)
 @Check('chk_combo_quantity_positive', '"quantity" > 0')
 @Check('chk_combo_distinct_dish', '"combo_dish_id" <> "component_dish_id"')
 export class DishComboItem {
@@ -31,11 +38,14 @@ export class DishComboItem {
   @Column({ type: 'int', default: 1 })
   quantity: number;
 
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
+
   @ManyToOne(() => Tenant)
   @JoinColumn({ name: 'tenant_id' })
   tenant: Tenant;
 
-  @ManyToOne(() => Dish, (dish) => dish.comboItems, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Dish, (dish) => dish.comboItems)
   @JoinColumn({ name: 'combo_dish_id' })
   comboDish: Dish;
 

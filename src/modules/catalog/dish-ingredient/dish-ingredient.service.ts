@@ -27,7 +27,7 @@ export class DishIngredientService {
   async findAll(tenantId: string, dishId: string): Promise<DishIngredient[]> {
     await this.assertDishExists(tenantId, dishId);
     return this.dishIngredientRepo.find({
-      where: { tenantId, dishId },
+      where: { tenantId, dishId, deleted: false },
       relations: { ingredient: true },
     });
   }
@@ -67,7 +67,8 @@ export class DishIngredientService {
 
   async remove(tenantId: string, dishId: string, id: string): Promise<void> {
     const dishIngredient = await this.findOne(tenantId, dishId, id);
-    await this.dishIngredientRepo.remove(dishIngredient);
+    dishIngredient.deleted = true;
+    await this.dishIngredientRepo.save(dishIngredient);
   }
 
   private async findOne(
@@ -76,7 +77,7 @@ export class DishIngredientService {
     id: string,
   ): Promise<DishIngredient> {
     const dishIngredient = await this.dishIngredientRepo.findOne({
-      where: { id, dishId, tenantId },
+      where: { id, dishId, tenantId, deleted: false },
     });
 
     if (!dishIngredient) {
@@ -90,7 +91,11 @@ export class DishIngredientService {
     tenantId: string,
     dishId: string,
   ): Promise<void> {
-    const exists = await this.dishRepo.existsBy({ id: dishId, tenantId });
+    const exists = await this.dishRepo.existsBy({
+      id: dishId,
+      tenantId,
+      deleted: false,
+    });
     if (!exists) {
       throw new NotFoundException('Plato no encontrado');
     }
@@ -103,6 +108,7 @@ export class DishIngredientService {
     const exists = await this.ingredientRepo.existsBy({
       id: ingredientId,
       tenantId,
+      deleted: false,
     });
     if (!exists) {
       throw new BadRequestException(

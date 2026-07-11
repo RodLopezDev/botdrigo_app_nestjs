@@ -7,7 +7,7 @@ import { dataSourceOptions } from './config/data-source';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { TenantModule } from './modules/tenant/tenant.module';
-// import { CatalogModule } from './modules/catalog/catalog.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { TenantModule } from './modules/tenant/tenant.module';
     TypeOrmModule.forRoot(dataSourceOptions),
     AuthModule,
     TenantModule,
-    // CatalogModule,
+    CatalogModule,
   ],
   controllers: [AppController],
   providers: [],

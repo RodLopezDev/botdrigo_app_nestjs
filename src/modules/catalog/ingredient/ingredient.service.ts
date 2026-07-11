@@ -19,14 +19,14 @@ export class IngredientService {
 
   findAll(tenantId: string): Promise<Ingredient[]> {
     return this.ingredientRepo.find({
-      where: { tenantId },
+      where: { tenantId, deleted: false },
       order: { name: 'ASC' },
     });
   }
 
   async findOne(tenantId: string, id: string): Promise<Ingredient> {
     const ingredient = await this.ingredientRepo.findOne({
-      where: { id, tenantId },
+      where: { id, tenantId, deleted: false },
     });
 
     if (!ingredient) {
@@ -80,7 +80,8 @@ export class IngredientService {
 
   async remove(tenantId: string, id: string): Promise<void> {
     const ingredient = await this.findOne(tenantId, id);
-    await this.ingredientRepo.remove(ingredient);
+    ingredient.deleted = true;
+    await this.ingredientRepo.save(ingredient);
   }
 
   private handleUniqueViolation(error: unknown): unknown {

@@ -43,6 +43,9 @@ export class DishPriceHistory {
   @Column({ name: 'changed_by', type: 'uuid' })
   changedBy: string;
 
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
+
   @CreateDateColumn({ name: 'changed_at', type: 'timestamptz' })
   changedAt: Date;
 
@@ -50,7 +53,7 @@ export class DishPriceHistory {
   @JoinColumn({ name: 'tenant_id' })
   tenant: Tenant;
 
-  @ManyToOne(() => Dish, (dish) => dish.priceHistory, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Dish, (dish) => dish.priceHistory)
   @JoinColumn({ name: 'dish_id' })
   dish: Dish;
 

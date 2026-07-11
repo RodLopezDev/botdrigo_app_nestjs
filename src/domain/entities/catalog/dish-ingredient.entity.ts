@@ -2,10 +2,10 @@ import {
   Check,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 
 import { Tenant } from '../auth/tenant.entity';
@@ -13,7 +13,10 @@ import { Dish } from './dish.entity';
 import { Ingredient } from './ingredient.entity';
 
 @Entity('catalog_dish_ingredients')
-@Unique(['dishId', 'ingredientId'])
+@Index('uq_dish_ingredients_dish_ingredient_active', ['dishId', 'ingredientId'], {
+  unique: true,
+  where: '"deleted" = false',
+})
 @Check('chk_dish_ingredient_quantity_positive', '"quantity" > 0')
 export class DishIngredient {
   @PrimaryGeneratedColumn('uuid')
@@ -35,13 +38,14 @@ export class DishIngredient {
   })
   quantity: string;
 
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean;
+
   @ManyToOne(() => Tenant)
   @JoinColumn({ name: 'tenant_id' })
   tenant: Tenant;
 
-  @ManyToOne(() => Dish, (dish) => dish.dishIngredients, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Dish, (dish) => dish.dishIngredients)
   @JoinColumn({ name: 'dish_id' })
   dish: Dish;
 

@@ -19,14 +19,14 @@ export class CategoryService {
 
   findAll(tenantId: string): Promise<Category[]> {
     return this.categoryRepo.find({
-      where: { tenantId },
+      where: { tenantId, deleted: false },
       order: { sortOrder: 'ASC', name: 'ASC' },
     });
   }
 
   async findOne(tenantId: string, id: string): Promise<Category> {
     const category = await this.categoryRepo.findOne({
-      where: { id, tenantId },
+      where: { id, tenantId, deleted: false },
     });
 
     if (!category) {
@@ -71,7 +71,8 @@ export class CategoryService {
 
   async remove(tenantId: string, id: string): Promise<void> {
     const category = await this.findOne(tenantId, id);
-    await this.categoryRepo.remove(category);
+    category.deleted = true;
+    await this.categoryRepo.save(category);
   }
 
   private handleUniqueViolation(error: unknown): unknown {
